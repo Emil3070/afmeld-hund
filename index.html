@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Reminder 4 A Dog - Afmeldingsportal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9ecef;
+            color: #333;
+            margin: 0;
+            padding: 40px 15px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background-color: #fff;
+            max-width: 600px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #0052cc;
+            color: #fff;
+            padding: 25px;
+            text-align: center;
+        }
+        .header h1 { margin: 0; font-size: 24px; }
+        .header p { margin: 5px 0 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #cce0ff; }
+        .content { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+        .btn {
+            background-color: #0052cc;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background-color: #003d99; }
+        
+        /* Loading Screen */
+        #loader { display: none; text-align: center; padding: 50px 20px; }
+        .spinner {
+            border: 6px solid #f3f3f3; border-top: 6px solid #0052cc;
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite; margin: 0 auto 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Error Screen */
+        #error-screen { display: none; text-align: center; padding: 40px 20px; color: #d9534f; }
+        #error-screen h2 { font-size: 28px; margin-bottom: 10px; }
+        #error-screen p { color: #333; font-size: 16px; line-height: 1.6; }
+        .error-box { background-color: #f9f2f2; border: 1px solid #d9534f; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: left; font-family: monospace; font-size: 12px; color: #666;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Your Reminder 4 A Dog™</h1>
+        <p>Global Afmeldingsportal - Formular 88-B</p>
+    </div>
+
+    <div class="content" id="step-1">
+        <p style="font-size: 14px; color: #555; margin-bottom: 25px;">For at slette klientens (jeres søns) anmodning om en Golden Retriever fra vores globale cloud-servere, bedes I venligst udfylde nedenstående sikkerhedsspørgsmål.</p>
+        
+        <form id="unsubscribe-form">
+            <div class="form-group">
+                <label>1. Hvor mange kvadratmeter blød sofa er der p.t. til rådighed per potentiel hund i husstanden?</label>
+                <select required>
+                    <option value="">Vælg venligst...</option>
+                    <option value="1">Under 10 kvm (Ikke godkendt)</option>
+                    <option value="2">Hele sofaen (Anbefalet)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>2. Angiv venligst jeres IP-adressens nuværende pels-kvotient:</label>
+                <input type="text" placeholder="F.eks. 0% (Kritisk lavt)" required>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="swear" required>
+                <label for="swear" style="font-weight: normal; margin:0;">Jeg sværger på min router, at vi ikke forsøger at anskaffe en kat i stedet.</label>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="dog-ready" required>
+                <label for="dog-ready" style="font-weight: normal; margin:0;">Jeg bekræfter, at manglende hundekøb kan medføre dårligt indeklima.</label>
+            </div>
+
+            <button type="submit" class="btn">Indsend Officiel Afmelding</button>
+        </form>
+    </div>
+
+    <div class="content" id="loader">
+        <div class="spinner"></div>
+        <h3 style="color: #0052cc;">Behandler anmodning...</h3>
+        <p id="loading-text" style="color: #666; font-size: 14px;">Opretter forbindelse til Global Headquarters...</p>
+    </div>
+
+    <div class="content" id="error-screen">
+        <h2>🚨 KRITISK SYSTEMFEJL 404 🚨</h2>
+        <p><strong>Afmelding afvist af serveren.</strong></p>
+        <p>Vores cloud-algoritmer kunne ikke verificere tilstedeværelsen af en Golden Retriever på den angivne matrikel.</p>
+        
+        <div class="error-box">
+            ERROR_CODE: DOG_NOT_FOUND_0x827<br>
+            SERVER_RESPONSE: "Insufficient Good Boy Energy"<br>
+            ACTION_REQUIRED: Køb hund for at genstarte systemet.
+        </div>
+        
+        <button class="btn" style="background-color: #6c757d; margin-top: 25px;" onclick="location.reload()">Prøv Igen</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('unsubscribe-form').addEventListener('submit', function(e) {
+        e.preventDefault(); // Stopper siden fra at reloade
+        
+        // Skjul form, vis loader
+        document.getElementById('step-1').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
+
+        // Skift tekst for at gøre det mere spændende/irriterende
+        setTimeout(() => { document.getElementById('loading-text').innerText = "Synkroniserer med satellitter..."; }, 1500);
+        setTimeout(() => { document.getElementById('loading-text').innerText = "Analyserer sofa-kvadratmeter..."; }, 3000);
+        setTimeout(() => { document.getElementById('loading-text').innerText = "Sletter hundedrømme... FEJL!"; }, 4500);
+
+        // Vis fejlbesked efter 5 sekunder
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('error-screen').style.display = 'block';
+        }, 5500);
+    });
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Reminder 4 A Dog - Afmeldingsportal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e9ecef;
+            color: #333;
+            margin: 0;
+            padding: 40px 15px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background-color: #fff;
+            max-width: 600px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #0052cc;
+            color: #fff;
+            padding: 25px;
+            text-align: center;
+        }
+        .header h1 { margin: 0; font-size: 24px; }
+        .header p { margin: 5px 0 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #cce0ff; }
+        .content { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+        .btn {
+            background-color: #0052cc;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background-color: #003d99; }
+        
+        /* Loading Screen */
+        #loader { display: none; text-align: center; padding: 50px 20px; }
+        .spinner {
+            border: 6px solid #f3f3f3; border-top: 6px solid #0052cc;
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite; margin: 0 auto 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Error Screen */
+        #error-screen { display: none; text-align: center; padding: 40px 20px; color: #d9534f; }
+        #error-screen h2 { font-size: 28px; margin-bottom: 10px; }
+        #error-screen p { color: #333; font-size: 16px; line-height: 1.6; }
+        .error-box { background-color: #f9f2f2; border: 1px solid #d9534f; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: left; font-family: monospace; font-size: 12px; color: #666;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Your Reminder 4 A Dog™</h1>
+        <p>Global Afmeldingsportal - Formular 88-B</p>
+    </div>
+
+    <div class="content" id="step-1">
+        <p style="font-size: 14px; color: #555; margin-bottom: 25px;">For at slette klientens (jeres søns) anmodning om en Golden Retriever fra vores globale cloud-servere, bedes I venligst udfylde nedenstående sikkerhedsspørgsmål.</p>
+        
+        <form id="unsubscribe-form">
+            <div class="form-group">
+                <label>1. Hvor mange kvadratmeter blød sofa er der p.t. til rådighed per potentiel hund i husstanden?</label>
+                <select required>
+                    <option value="">Vælg venligst...</option>
+                    <option value="1">Under 10 kvm (Ikke godkendt)</option>
+                    <option value="2">Hele sofaen (Anbefalet)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>2. Angiv venligst jeres IP-adressens nuværende pels-kvotient:</label>
+                <input type="text" placeholder="F.eks. 0% (Kritisk lavt)" required>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="swear" required>
+                <label for="swear" style="font-weight: normal; margin:0;">Jeg sværger på min router, at vi ikke forsøger at anskaffe en kat i stedet.</label>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="dog-ready" required>
+                <label for="dog-ready" style="font-weight: normal; margin:0;">Jeg bekræfter, at manglende hundekøb kan medføre dårligt indeklima.</label>
+            </div>
+
+            <button type="submit" class="btn">Indsend Officiel Afmelding</button>
+        </form>
+    </div>
+
+    <div class="content" id="loader">
+        <div class="spinner"></div>
+        <h3 style="color: #0052cc;">Behandler anmodning...</h3>
+        <p id="loading-text" style="color: #666; font-size: 14px;">Opretter forbindelse til Global Headquarters...</p>
+    </div>
+
+    <div class="content" id="error-screen">
+        <h2>🚨 KRITISK SYSTEMFEJL 404 🚨</h2>
+        <p><strong>Afmelding afvist af serveren.</strong></p>
+        <p>Vores cloud-algoritmer kunne ikke verificere tilstedeværelsen af en Golden Retriever på den angivne matrikel.</p>
+        
+        <div class="error-box">
+            ERROR_CODE: DOG_NOT_FOUND_0x827<br>
+            SERVER_RESPONSE: "Insufficient Good Boy Energy"<br>
+            ACTION_REQUIRED: Køb hund for at genstarte systemet.
+        </div>
+        
+        <button class="btn" style="background-color: #6c757d; margin-top: 25px;" onclick="location.reload()">Prøv Igen</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('unsubscribe-form').addEventListener('submit', function(e) {
+        e.preventDefault(); // Stopper siden fra at reloade
+        
+        // Skjul form, vis loader
+        document.getElementById('step-1').style.display = 'none';
+        document.getElementById('loader').style.display = 'block';
+
+        // Skift tekst for at gøre det mere spændende/irriterende
+        setTimeout(() => { document.getElementById('loading-text').innerText = "Synkroniserer med satellitter..."; }, 1500);
+        setTimeout(() => { document.getElementById('loading-text').innerText = "Analyserer sofa-kvadratmeter..."; }, 3000);
+        setTimeout(() => { document.getElementById('loading-text').innerText = "Sletter hundedrømme... FEJL!"; }, 4500);
+
+        // Vis fejlbesked efter 5 sekunder
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('error-screen').style.display = 'block';
+        }, 5500);
+    });
+</script>
+
+</body>
+</html>
